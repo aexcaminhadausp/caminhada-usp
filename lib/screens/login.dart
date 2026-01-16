@@ -1,5 +1,5 @@
-import 'package:app/components/botao_login.dart';
-import 'package:app/components/campos_login.dart';
+import 'package:app/components/login_button.dart';
+import 'package:app/components/login_field.dart';
 import 'package:app/screens/main_page.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
   String? errorMessage;
 
-  bool lembrarDeMim = false;
+  bool rememberMe = false;
 
   @override
   Widget build(BuildContext context) {
@@ -69,21 +69,21 @@ class _LoginPageState extends State<LoginPage> {
                                         borderRadius: BorderRadius.all(Radius.circular(30)),
                                     ),
                                     child: Column(children: [
-                                        BotaoLogin(),
+                                        LoginButton(),
                                         const SizedBox(height: 10,),
                                         Divider(),
                                         const SizedBox(height: 10,),
-                                        CamposLogin(controller: emailController, obscureText: false, hintText: "Email",),
+                                        LoginField(controller: emailController, obscureText: false, hintText: "Email",),
                                         const SizedBox(height: 15,),
-                                        CamposLogin(controller: passwordController, obscureText: true, hintText: "Senha",),
+                                        LoginField(controller: passwordController, obscureText: true, hintText: "Senha",),
                                         const SizedBox(height: 5,),
                                         Row(
                                             children: [
                                                 Checkbox(
-                                                value: lembrarDeMim,
+                                                value: rememberMe,
                                                 onChanged: (value) {
                                                     setState(() {
-                                                    lembrarDeMim = value!;
+                                                    rememberMe = value!;
                                                     });
                                                 },
                                                 ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class PontoPopular extends StatelessWidget {
-  final String nomeLocal;
-  final Color cor;
-  const PontoPopular({super.key, required this.nomeLocal, required this.cor});
+class PopularWWalkingSpots extends StatelessWidget {
+  final String localName;
+  final Color color;
+  const PopularWWalkingSpots({super.key, required this.localName, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +16,13 @@ class PontoPopular extends StatelessWidget {
         }, 
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
-          backgroundColor: cor,
+          backgroundColor: color,
         ),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child:Align(
             alignment: Alignment.bottomLeft,
-            child: Text(nomeLocal, style: TextStyle(
+            child: Text(localName, style: TextStyle(
               fontSize: 30,
               fontWeight: FontWeight.bold
             ),)

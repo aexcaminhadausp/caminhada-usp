@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-class WarningRota extends StatelessWidget {
-  final String mensagem;
-  const WarningRota({super.key, required this.mensagem});
+class RouteWarning extends StatelessWidget {
+  final String message;
+  const RouteWarning({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class WarningRota extends StatelessWidget {
               fontSize: 18
               ),),
             SizedBox(width: 5,),
-            Text(mensagem, style: TextStyle(
+            Text(message, style: TextStyle(
               fontSize: 18
               ),)
           ],

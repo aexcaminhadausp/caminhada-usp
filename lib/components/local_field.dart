@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class CampoRota extends StatelessWidget {
-  final String titulo;
+class LocalField extends StatelessWidget {
+  final String title;
   final String hint;
-  const CampoRota({super.key, required this.titulo, required this.hint});
+  const LocalField({super.key, required this.title, required this.hint});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class CampoRota extends StatelessWidget {
         children: [
           const Icon(Icons.pin_drop_rounded),
           const SizedBox(width: 8),
-          Text("$titulo:", style: TextStyle(
+          Text("$title:", style: TextStyle(
               fontSize: 20
             ),
           ),

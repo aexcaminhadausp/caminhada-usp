@@ -1,15 +1,15 @@
-import 'package:app/components/botao_rota.dart';
-import 'package:app/components/item_info.dart';
+import 'package:app/components/controll_route_button.dart';
+import 'package:app/components/route_statistic_tracking_label.dart';
 import 'package:flutter/material.dart';
 
-class Rota extends StatefulWidget {
-  const Rota({super.key});
+class RouteTracking extends StatefulWidget {
+  const RouteTracking({super.key});
 
   @override
-  State<Rota> createState() => _RotaState();
+  State<RouteTracking> createState() => _RouteTrackingState();
 }
 
-class _RotaState extends State<Rota> {
+class _RouteTrackingState extends State<RouteTracking> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,37 +56,43 @@ class _RotaState extends State<Rota> {
                     //estatisticas de tempo e distancia ja percorridas
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        InfoItem(
-                          icon: Icons.directions_walk,
-                          label: "Tempo",
-                          value: "00:30:24",
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            RoteStatisticLabel(
+                              icon: Icons.directions_walk,
+                              label: "Tempo",
+                              value: "00:30:24",
+                            ),
+                            SizedBox(height: 12),
+                            RoteStatisticLabel(
+                              icon: Icons.wb_sunny_outlined,
+                              label: "Clima",
+                              value: "30°",
+                            ),
+                          ],
                         ),
-                        InfoItem(
-                          icon: Icons.map,
-                          label: "Distância",
-                          value: "12.5km / 20km",
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            RoteStatisticLabel(
+                              icon: Icons.map,
+                              label: "Distância",
+                              value: "12.5km / 20km",
+                            ),
+                            SizedBox(height: 12),
+                            RoteStatisticLabel(
+                              icon: Icons.trending_up,
+                              label: "Inclinação",
+                              value: "60%",
+                            ),
+                          ],
                         ),
                       ],
                     ),
 
-                    const SizedBox(height: 12),
-                    //estatisticas de tempo
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        InfoItem(
-                          icon: Icons.wb_sunny_outlined,
-                          label: "Clima",
-                          value: "30°",
-                        ),
-                        InfoItem(
-                          icon: Icons.trending_up,
-                          label: "Inclinação",
-                          value: "60%",
-                        ),
-                      ],
-                    ),
 
                     const SizedBox(height: 24),
 
@@ -105,20 +111,20 @@ class _RotaState extends State<Rota> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                BotaoRota(
+                ControllRoteButton(
                   icone: Icons.play_arrow_outlined,
-                  tamanhoIcone: 60,
-                  tamanhoBotao: 80,
-                  cor: Colors.green,
-                  finalizar: false,
+                  iconSize: 60,
+                  buttonSize: 80,
+                  color: Colors.green,
+                  finish: false,
                 ),
                 const SizedBox(width: 10),
-                BotaoRota(
+                ControllRoteButton(
                   icone: Icons.stop_outlined,
-                  tamanhoIcone: 30,
-                  tamanhoBotao: 50,
-                  cor: Colors.blueGrey,
-                  finalizar: true,
+                  iconSize: 30,
+                  buttonSize: 50,
+                  color: Colors.blueGrey,
+                  finish: true,
                 ),
               ],
             ),

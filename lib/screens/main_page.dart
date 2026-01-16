@@ -1,4 +1,4 @@
-import 'package:app/screens/criar_rota.dart';
+import 'package:app/screens/create_route.dart';
 import 'package:app/screens/home.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +24,7 @@ class _MainPageState extends State<MainPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           //botao flutuante abre a pagina de criar rota
-          Navigator.push(context, MaterialPageRoute(builder: (_) =>CriarRota()));
+          Navigator.push(context, MaterialPageRoute(builder: (_) =>CreateRoteScreen()));
         },
         child: const Icon(Icons.add),
       ),
