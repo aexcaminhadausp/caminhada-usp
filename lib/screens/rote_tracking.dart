@@ -1,5 +1,5 @@
 import 'package:app/components/controll_rote_button.dart';
-import 'package:app/components/item_info.dart';
+import 'package:app/components/rote_statistic_label.dart';
 import 'package:flutter/material.dart';
 
 class Rota extends StatefulWidget {
@@ -105,20 +105,20 @@ class _RotaState extends State<Rota> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                BotaoRota(
+                ControllRoteButton(
                   icone: Icons.play_arrow_outlined,
-                  tamanhoIcone: 60,
-                  tamanhoBotao: 80,
-                  cor: Colors.green,
-                  finalizar: false,
+                  iconSize: 60,
+                  buttonSize: 80,
+                  color: Colors.green,
+                  finish: false,
                 ),
                 const SizedBox(width: 10),
-                BotaoRota(
+                ControllRoteButton(
                   icone: Icons.stop_outlined,
-                  tamanhoIcone: 30,
-                  tamanhoBotao: 50,
-                  cor: Colors.blueGrey,
-                  finalizar: true,
+                  iconSize: 30,
+                  buttonSize: 50,
+                  color: Colors.blueGrey,
+                  finish: true,
                 ),
               ],
             ),

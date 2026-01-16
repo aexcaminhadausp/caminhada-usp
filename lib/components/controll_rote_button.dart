@@ -1,35 +1,35 @@
 import 'package:app/screens/rote_statistic.dart';
 import 'package:flutter/material.dart';
 
-class BotaoRota extends StatelessWidget {
+class ControllRoteButton extends StatelessWidget {
   final IconData icone;
-  final double tamanhoBotao;
-  final double tamanhoIcone;
-  final Color cor;
-  final bool finalizar;
-  const BotaoRota({
+  final double buttonSize;
+  final double iconSize;
+  final Color color;
+  final bool finish;
+  const ControllRoteButton({
     super.key, 
     required this.icone, 
-    required this.tamanhoBotao, 
-    required this.tamanhoIcone,
-    required this.cor,
-    required this.finalizar});
+    required this.buttonSize, 
+    required this.iconSize,
+    required this.color,
+    required this.finish});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: tamanhoBotao,
-      height: tamanhoBotao,
+      width: buttonSize,
+      height: buttonSize,
       child: ElevatedButton(
-        onPressed: () {if(finalizar){
+        onPressed: () {if(finish){
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RotaFinalizada(),));
         }},
         style: ElevatedButton.styleFrom(
           shape: const CircleBorder(),
           padding: EdgeInsets.zero,
-          backgroundColor: cor,
+          backgroundColor: color,
         ),
-        child: Icon(icone, size: tamanhoIcone,),
+        child: Icon(icone, size: iconSize,),
       ),
     );
   }
