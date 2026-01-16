@@ -71,14 +71,14 @@ class _HomePageState extends State<HomePage> {
               ),
 
               Divider(thickness: 2, color: const Color.fromARGB(255, 66, 66, 66),),
-              UltimoTrajeto(
-                nomeLocal: "Faculdade de Direito de Ribeirão Preto", 
-                nomeEndereco: "Rua Prof. Doutor Aymar Batista Prado"
+              LatestRoute(
+                localName: "Faculdade de Direito de Ribeirão Preto", 
+                addressName: "Rua Prof. Doutor Aymar Batista Prado"
               ),
               SizedBox(height: 5,),
-              UltimoTrajeto(
-                nomeLocal: "Faculdade de Direito de Ribeirão Preto", 
-                nomeEndereco: "Rua Prof. Doutor Aymar Batista Prado"
+              LatestRoute(
+                localName: "Faculdade de Direito de Ribeirão Preto", 
+                addressName: "Rua Prof. Doutor Aymar Batista Prado"
               ),
 
               const SizedBox(height: 15,),
@@ -94,9 +94,9 @@ class _HomePageState extends State<HomePage> {
               ),
 
               Divider(thickness: 2, color: const Color.fromARGB(255, 66, 66, 66),),
-              PontoPopular(nomeLocal: "Biblioteca Central", cor: Colors.green),
+              PopularWWalkingSpots(localName: "Biblioteca Central", color: Colors.green),
               SizedBox(height: 10,),
-              PontoPopular(nomeLocal: "Teatro do Campus", cor: Colors.purple),
+              PopularWWalkingSpots(localName: "Teatro do Campus", color: Colors.purple),
             ],
           ),
         ),

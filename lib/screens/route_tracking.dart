@@ -2,14 +2,14 @@ import 'package:app/components/controll_route_button.dart';
 import 'package:app/components/route_statistic_label.dart';
 import 'package:flutter/material.dart';
 
-class Rota extends StatefulWidget {
-  const Rota({super.key});
+class RouteTracking extends StatefulWidget {
+  const RouteTracking({super.key});
 
   @override
-  State<Rota> createState() => _RotaState();
+  State<RouteTracking> createState() => _RouteTrackingState();
 }
 
-class _RotaState extends State<Rota> {
+class _RouteTrackingState extends State<RouteTracking> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

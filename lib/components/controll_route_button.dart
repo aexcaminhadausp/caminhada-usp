@@ -22,7 +22,7 @@ class ControllRoteButton extends StatelessWidget {
       height: buttonSize,
       child: ElevatedButton(
         onPressed: () {if(finish){
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RotaFinalizada(),));
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatisticRouteScreen(),));
         }},
         style: ElevatedButton.styleFrom(
           shape: const CircleBorder(),

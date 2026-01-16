@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class BotaoLogin extends StatelessWidget {
-  const BotaoLogin({super.key});
+class LoginButton extends StatelessWidget {
+  const LoginButton({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class RotaFinalizada extends StatefulWidget {
-  const RotaFinalizada({super.key});
+class StatisticRouteScreen extends StatefulWidget {
+  const StatisticRouteScreen({super.key});
 
   @override
-  State<RotaFinalizada> createState() => _RotaFinalizadaState();
+  State<StatisticRouteScreen> createState() => _StatisticRouteScreenState();
 }
 //tela de rota finalizada
-class _RotaFinalizadaState extends State<RotaFinalizada> {
+class _StatisticRouteScreenState extends State<StatisticRouteScreen> {
   int avaliacao = 0;
   @override
   Widget build(BuildContext context) {
@@ -30,9 +30,9 @@ class _RotaFinalizadaState extends State<RotaFinalizada> {
               ),
             Divider(thickness: 2, color: const Color.fromARGB(255, 66, 66, 66),),
             //linhas e seus valores
-            _InfoLinha(label: "Distância Percorrida", valor: "20km"),
-            _InfoLinha(label: "Tempo Total", valor: "1 hora"),
-            _InfoLinha(label: "Calorias", valor: "120kcal"),
+            _StatisticInfo(label: "Distância Percorrida", value: "20km"),
+            _StatisticInfo(label: "Tempo Total", value: "1 hora"),
+            _StatisticInfo(label: "Calorias", value: "120kcal"),
             const SizedBox(height: 24),
 
             //parte da avaliacao
@@ -105,13 +105,13 @@ class _RotaFinalizadaState extends State<RotaFinalizada> {
   }
 }
 //classe que cria as linhas das estatisticas
-class _InfoLinha extends StatelessWidget {
+class _StatisticInfo extends StatelessWidget {
   final String label;
-  final String valor;
+  final String value;
 
-  const _InfoLinha({
+  const _StatisticInfo({
     required this.label,
-    required this.valor,
+    required this.value,
   });
 
   @override
@@ -123,7 +123,7 @@ class _InfoLinha extends StatelessWidget {
         children: [
           Text(label),
           Text(
-            valor,
+            value,
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ],

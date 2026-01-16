@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class UltimoTrajeto extends StatelessWidget {
-  final String nomeLocal;
-  final String nomeEndereco;
-  const UltimoTrajeto({super.key, required this.nomeLocal, required this.nomeEndereco});
+class LatestRoute extends StatelessWidget {
+  final String localName;
+  final String addressName;
+  const LatestRoute({super.key, required this.localName, required this.addressName});
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class UltimoTrajeto extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children:[
                     Text(
-                      nomeLocal,
+                      localName,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
@@ -44,7 +44,7 @@ class UltimoTrajeto extends StatelessWidget {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      nomeEndereco,
+                      addressName,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],

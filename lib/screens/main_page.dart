@@ -24,7 +24,7 @@ class _MainPageState extends State<MainPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           //botao flutuante abre a pagina de criar rota
-          Navigator.push(context, MaterialPageRoute(builder: (_) =>CriarRota()));
+          Navigator.push(context, MaterialPageRoute(builder: (_) =>CreateRoteScreen()));
         },
         child: const Icon(Icons.add),
       ),

@@ -3,19 +3,19 @@ import 'package:app/components/route_warnings.dart';
 import 'package:app/screens/route_tracking.dart';
 import 'package:flutter/material.dart';
 
-class CriarRota extends StatefulWidget {
-  const CriarRota({super.key});
+class CreateRoteScreen extends StatefulWidget {
+  const CreateRoteScreen({super.key});
 
   @override
-  State<CriarRota> createState() => _CriarRotaState();
+  State<CreateRoteScreen> createState() => _CreateRoteScreenState();
 }
 
-class _CriarRotaState extends State<CriarRota> {
-  int? _tipoSelecionado;
-  final List<TipoCaminhada> tipos =[
-    TipoCaminhada(titulo: "Rápida", icone: Icons.run_circle_outlined),
-    TipoCaminhada(titulo: "Acessível", icone: Icons.wheelchair_pickup_outlined),
-    TipoCaminhada(titulo: "Sombra", icone: Icons.nature_people)
+class _CreateRoteScreenState extends State<CreateRoteScreen> {
+  int? _selectedType;
+  final List<WalkingPreferenceType> walkingPreferencesTypes =[
+    WalkingPreferenceType(title: "Rápida", icon: Icons.run_circle_outlined),
+    WalkingPreferenceType(title: "Acessível", icon: Icons.wheelchair_pickup_outlined),
+    WalkingPreferenceType(title: "Sombra", icon: Icons.nature_people)
   ];
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class _CriarRotaState extends State<CriarRota> {
     appBar: AppBar(title: const Text("Criar Rota")),
     body: Stack(
       children: [
-       _principal(),
+       _configurationRouteLabel(),
        DraggableScrollableSheet(
           initialChildSize: 0.3,
           minChildSize: 0.3,
@@ -54,7 +54,7 @@ class _CriarRotaState extends State<CriarRota> {
           bottom: 100,
           child: ElevatedButton(
             onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Rota()),);
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RouteTracking()),);
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -74,14 +74,14 @@ class _CriarRotaState extends State<CriarRota> {
     ),
   );
   }
-  Widget _principal(){
+  Widget _configurationRouteLabel(){
     return  Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          CampoRota(titulo: "Origem", hint: "Localização Atual"),
+          LocalField(title: "Origem", hint: "Localização Atual"),
           const SizedBox(height: 10),
-          CampoRota(titulo: "Destino", hint: "Biblioteca Central"),
+          LocalField(title: "Destino", hint: "Biblioteca Central"),
           const SizedBox(height: 20),
 
           SizedBox( //botoes de escolha de rota
@@ -91,48 +91,48 @@ class _CriarRotaState extends State<CriarRota> {
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
               childAspectRatio: 0.9,
-              children: List.generate(tipos.length, (index) {
-              final item = tipos[index];
-              final bool selecionado = (_tipoSelecionado == index);
+              children: List.generate(walkingPreferencesTypes.length, (index) {
+              final iten = walkingPreferencesTypes[index];
+              final bool selected = (_selectedType == index);
 
               return InkWell(
                 borderRadius: BorderRadius.circular(12),
                 onTap: () {
                   setState(() {
-                    _tipoSelecionado = index;
+                    _selectedType = index;
                   });
                 },
                 child: Card(
-                  elevation: selecionado ? 6 : 2,
+                  elevation: selected ? 6 : 2,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                     side: BorderSide(
-                      color: selecionado
+                      color: selected
                           ? Theme.of(context).colorScheme.primary
                           : Colors.transparent,
                       width: 2,
                     ),
                   ),
-                  color: selecionado
+                  color: selected
                       ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.1)
                       : Colors.white,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        item.icone,
+                        iten.icon,
                         size: 30,
-                        color: selecionado
+                        color: selected
                             ? Theme.of(context).colorScheme.primary
                             : Colors.grey[700],
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        item.titulo,
+                        iten.title,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: selecionado
+                          color: selected
                               ? Theme.of(context).colorScheme.primary
                               : Colors.black,
                         ),
@@ -146,22 +146,21 @@ class _CriarRotaState extends State<CriarRota> {
           ),
 
           const SizedBox(height: 10),
-          WarningRota(mensagem: "Beba bastante água!"),
+          RouteWarning(message: "Beba bastante água!"),
           const SizedBox(height: 10),
-          WarningRota(mensagem: "Passe protetor solar!"),
+          RouteWarning(message: "Passe protetor solar!"),
         ],
       ),
     );
   }
 }
 
-
-class TipoCaminhada{
-  final String titulo;
-  final IconData icone;
+class WalkingPreferenceType{
+  final String title;
+  final IconData icon;
   
-  TipoCaminhada({
-    required this.titulo,
-    required this.icone
+  WalkingPreferenceType({
+    required this.title,
+    required this.icon
   });
 }
