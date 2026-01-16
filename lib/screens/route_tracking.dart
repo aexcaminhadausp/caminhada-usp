@@ -1,5 +1,5 @@
 import 'package:app/components/controll_route_button.dart';
-import 'package:app/components/route_statistic_label.dart';
+import 'package:app/components/route_statistic_tracking_label.dart';
 import 'package:flutter/material.dart';
 
 class RouteTracking extends StatefulWidget {

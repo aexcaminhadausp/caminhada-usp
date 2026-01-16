@@ -1,3 +1,4 @@
+import 'package:app/components/route_statistic_finished_label.dart';
 import 'package:flutter/material.dart';
 
 class StatisticRouteScreen extends StatefulWidget {
@@ -30,9 +31,9 @@ class _StatisticRouteScreenState extends State<StatisticRouteScreen> {
               ),
             Divider(thickness: 2, color: const Color.fromARGB(255, 66, 66, 66),),
             //linhas e seus valores
-            _StatisticInfo(label: "Distância Percorrida", value: "20km"),
-            _StatisticInfo(label: "Tempo Total", value: "1 hora"),
-            _StatisticInfo(label: "Calorias", value: "120kcal"),
+            RouteStatisticFinishedLabel(label: "Distância Percorrida", value: "20km"),
+            RouteStatisticFinishedLabel(label: "Tempo Total", value: "1 hora"),
+            RouteStatisticFinishedLabel(label: "Calorias", value: "120kcal"),
             const SizedBox(height: 24),
 
             //parte da avaliacao
@@ -104,30 +105,4 @@ class _StatisticRouteScreenState extends State<StatisticRouteScreen> {
     );
   }
 }
-//classe que cria as linhas das estatisticas
-class _StatisticInfo extends StatelessWidget {
-  final String label;
-  final String value;
 
-  const _StatisticInfo({
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label),
-          Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ],
-      ),
-    );
-  }
-}
