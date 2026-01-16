@@ -1,5 +1,5 @@
-import 'package:app/components/botao_login.dart';
-import 'package:app/components/campos_login.dart';
+import 'package:app/components/login_button.dart';
+import 'package:app/components/login_field.dart';
 import 'package:app/screens/main_page.dart';
 import 'package:flutter/material.dart';
 

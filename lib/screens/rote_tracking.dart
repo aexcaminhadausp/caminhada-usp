@@ -1,4 +1,4 @@
-import 'package:app/components/botao_rota.dart';
+import 'package:app/components/controll_rote_button.dart';
 import 'package:app/components/item_info.dart';
 import 'package:flutter/material.dart';
 

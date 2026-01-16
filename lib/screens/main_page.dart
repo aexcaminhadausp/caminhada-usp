@@ -1,4 +1,4 @@
-import 'package:app/screens/criar_rota.dart';
+import 'package:app/screens/create_rote.dart';
 import 'package:app/screens/home.dart';
 import 'package:flutter/material.dart';
 

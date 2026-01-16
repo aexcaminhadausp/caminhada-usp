@@ -1,4 +1,4 @@
-import 'package:app/screens/rota_finalizada.dart';
+import 'package:app/screens/rote_statistic.dart';
 import 'package:flutter/material.dart';
 
 class BotaoRota extends StatelessWidget {

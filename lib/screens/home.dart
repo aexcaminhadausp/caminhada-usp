@@ -1,5 +1,5 @@
-import 'package:app/components/pontos_populares.dart';
-import 'package:app/components/ultimos_trajetos.dart';
+import 'package:app/components/popular_walking_spots.dart';
+import 'package:app/components/latest_rote.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
