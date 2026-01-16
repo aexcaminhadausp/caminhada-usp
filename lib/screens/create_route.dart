@@ -1,6 +1,6 @@
 import 'package:app/components/local_field.dart';
-import 'package:app/components/rote_warnings.dart';
-import 'package:app/screens/rote_tracking.dart';
+import 'package:app/components/route_warnings.dart';
+import 'package:app/screens/route_tracking.dart';
 import 'package:flutter/material.dart';
 
 class CriarRota extends StatefulWidget {

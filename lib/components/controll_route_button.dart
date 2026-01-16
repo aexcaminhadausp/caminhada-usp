@@ -1,4 +1,4 @@
-import 'package:app/screens/rote_statistic.dart';
+import 'package:app/screens/route_statistic.dart';
 import 'package:flutter/material.dart';
 
 class ControllRoteButton extends StatelessWidget {
