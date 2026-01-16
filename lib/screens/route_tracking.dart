@@ -1,4 +1,4 @@
-import 'package:app/components/controll_rote_button.dart';
+import 'package:app/components/controll_route_button.dart';
 import 'package:app/components/rote_statistic_label.dart';
 import 'package:flutter/material.dart';
 
@@ -57,12 +57,12 @@ class _RotaState extends State<Rota> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
-                        InfoItem(
+                        RoteStatisticLabel(
                           icon: Icons.directions_walk,
                           label: "Tempo",
                           value: "00:30:24",
                         ),
-                        InfoItem(
+                        RoteStatisticLabel(
                           icon: Icons.map,
                           label: "Distância",
                           value: "12.5km / 20km",
@@ -75,12 +75,12 @@ class _RotaState extends State<Rota> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
-                        InfoItem(
+                        RoteStatisticLabel(
                           icon: Icons.wb_sunny_outlined,
                           label: "Clima",
                           value: "30°",
                         ),
-                        InfoItem(
+                        RoteStatisticLabel(
                           icon: Icons.trending_up,
                           label: "Inclinação",
                           value: "60%",

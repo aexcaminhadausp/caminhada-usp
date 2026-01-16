@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class InfoItem extends StatelessWidget {
+class RoteStatisticLabel extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
 
-  const InfoItem({super.key, 
+  const RoteStatisticLabel({super.key, 
     required this.icon,
     required this.label,
     required this.value,
