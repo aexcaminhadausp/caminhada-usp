@@ -2,14 +2,14 @@ import 'package:app/screens/create_route.dart';
 import 'package:app/screens/home.dart';
 import 'package:flutter/material.dart';
 
-class MainPage extends StatefulWidget { //controle do rodape e botao flutuante
-  const MainPage({super.key});
+class HomeScaffold extends StatefulWidget { //controle do rodape e botao flutuante
+  const HomeScaffold({super.key});
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<HomeScaffold> createState() => _HomeScaffoldState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _HomeScaffoldState extends State<HomeScaffold> {
   int _currentIndex = 0;
 
   final _pages = const [

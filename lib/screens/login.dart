@@ -1,6 +1,6 @@
 import 'package:app/components/login_button.dart';
 import 'package:app/components/login_field.dart';
-import 'package:app/screens/main_page.dart';
+import 'package:app/screens/home_scaffold.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -105,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                                             child: ElevatedButton(
                                             onPressed: () { Navigator.pushReplacement(
                                                 context, 
-                                                MaterialPageRoute(builder: (_) => MainPage())
+                                                MaterialPageRoute(builder: (_) => HomeScaffold())
                                             );},
                                             style: ElevatedButton.styleFrom(
                                                 elevation: 2,
