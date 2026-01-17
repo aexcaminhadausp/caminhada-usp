@@ -61,13 +61,13 @@ class _RouteTrackingState extends State<RouteTracking> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
-                            RoteStatisticLabel(
+                            RouteStatisticTrackingLabel(
                               icon: Icons.directions_walk,
                               label: "Tempo",
                               value: "00:30:24",
                             ),
                             SizedBox(height: 12),
-                            RoteStatisticLabel(
+                            RouteStatisticTrackingLabel(
                               icon: Icons.wb_sunny_outlined,
                               label: "Clima",
                               value: "30°",
@@ -77,13 +77,13 @@ class _RouteTrackingState extends State<RouteTracking> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
-                            RoteStatisticLabel(
+                            RouteStatisticTrackingLabel(
                               icon: Icons.map,
                               label: "Distância",
                               value: "12.5km / 20km",
                             ),
                             SizedBox(height: 12),
-                            RoteStatisticLabel(
+                            RouteStatisticTrackingLabel(
                               icon: Icons.trending_up,
                               label: "Inclinação",
                               value: "60%",
