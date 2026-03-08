@@ -2,6 +2,7 @@ import 'package:app/components/local_field.dart';
 import 'package:app/components/route_warnings.dart';
 import 'package:app/screens/route_tracking.dart';
 import 'package:flutter/material.dart';
+import 'package:app/services/geocoding_service.dart';
 
 class CreateRoteScreen extends StatefulWidget {
   const CreateRoteScreen({super.key});
@@ -12,6 +13,10 @@ class CreateRoteScreen extends StatefulWidget {
 
 class _CreateRoteScreenState extends State<CreateRoteScreen> {
   int? _selectedType;
+  final TextEditingController origemController =
+  TextEditingController();
+  final TextEditingController destinoController =
+  TextEditingController();
   final List<WalkingPreferenceType> walkingPreferencesTypes =[
     WalkingPreferenceType(title: "Rápida", icon: Icons.run_circle_outlined),
     WalkingPreferenceType(title: "Acessível", icon: Icons.wheelchair_pickup_outlined),
@@ -53,8 +58,52 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
           right: 20,
           bottom: 100,
           child: ElevatedButton(
-            onPressed: () {
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => RouteTracking()),);
+            onPressed: () async {
+              final startQuery = origemController.text;
+              final endQuery = destinoController.text;
+
+              print("Origem digitada: $startQuery");
+              print("Destino digitado: $endQuery");
+
+              if (startQuery.isEmpty || endQuery.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Digite origem e destino"),
+                  ),
+                );
+
+                return;
+              }
+
+              final start =
+              await GeocodingService.getCoordinates(startQuery);
+
+              final end =
+              await GeocodingService.getCoordinates(endQuery);
+
+              print("Start coords: $start");
+              print("End coords: $end");
+
+              if (start == null || end == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Não foi possível encontrar a rotaaaaaa"),
+                  ),
+                );
+
+                return;
+              }
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      RouteTracking(
+                        start: start,
+                        end: end,
+                      ),
+                ),
+              );
             },
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -79,9 +128,17 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          LocalField(title: "Origem", hint: "Localização Atual"),
+        LocalField(
+        title: "Origem",
+        hint: "Localização Atual",
+        controller: origemController,
+      ),
           const SizedBox(height: 10),
-          LocalField(title: "Destino", hint: "Biblioteca Central"),
+        LocalField(
+          title: "Destino",
+          hint: "Biblioteca Central",
+          controller: destinoController,
+        ),
           const SizedBox(height: 20),
 
           SizedBox( //botoes de escolha de rota
