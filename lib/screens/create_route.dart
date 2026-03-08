@@ -87,7 +87,7 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
               if (start == null || end == null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text("Não foi possível encontrar a rotaaaaaa"),
+                    content: Text("Não foi possível encontrar a rota"),
                   ),
                 );
 
