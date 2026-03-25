@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    container_name: aex_database
+    restart: always
+    environment:
+      POSTGRES_USER: user_aex
+      POSTGRES_PASSWORD: password_aex
+      POSTGRES_DB: aex_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:
