@@ -32,7 +32,9 @@ CREATE TABLE points_of_interest (
     name VARCHAR(255) NOT NULL,
     geom_point GEOMETRY(Point, 4326) NOT NULL,
     description TEXT,
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+
 );
 
 -- 6. Histórico de Rotas
