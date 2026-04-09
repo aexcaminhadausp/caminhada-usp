@@ -2,6 +2,8 @@
 
 Projeto desenvolvido por estudantes de Ciência da Computação da Universidade de São Paulo.
 
+Documentação: 
+
 
 ## Configuração do Backend (Python + FastAPI)
 
@@ -40,7 +42,16 @@ Com o ambiente ativo, instale todas as bibliotecas necessárias de uma só vez:
 pip install -r requirements.txt
 ```
 
-### 5. Rodando a API (Modo de Desenvolvimento)
+### 5. Rodando o banco de dados (Docker)
+Para iniciar o banco de dados o docker precisa estar aberto e então rodar o código a seguir:
+
+```bash
+# Dentro da pasta backend
+docker-compose up -d
+```
+
+
+### 6. Rodando a API (Modo de Desenvolvimento)
 Para subir o servidor e testar os endpoints:
 
 ```bash

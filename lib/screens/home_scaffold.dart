@@ -1,5 +1,6 @@
 import 'package:app/screens/create_route.dart';
 import 'package:app/screens/home.dart';
+import 'package:app/screens/profile.dart';
 import 'package:flutter/material.dart';
 
 class HomeScaffold extends StatefulWidget { //controle do rodape e botao flutuante
@@ -14,6 +15,7 @@ class _HomeScaffoldState extends State<HomeScaffold> {
 
   final _pages = const [
     HomePage(),
+    ProfileScreen(),
   ];
 
   @override

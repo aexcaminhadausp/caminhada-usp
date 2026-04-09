@@ -1,5 +1,6 @@
 import 'package:app/components/popular_walking_spots.dart';
 import 'package:app/components/latest_route.dart';
+import 'package:app/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -11,6 +12,23 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final searchController = TextEditingController();
+  late Future<List<dynamic>> _poisFuture;
+
+  // Lista de cores para alternar visualmente entre os cards dos pontos
+  final List<Color> _poiColors = [
+    Colors.green,
+    Colors.purple,
+    Colors.orange,
+    Colors.blue,
+    Colors.red,
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    // Inicia a busca dos POIs no servidor assim que a tela abre
+    _poisFuture = ApiService.getMapPOIs();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +38,7 @@ class _HomePageState extends State<HomePage> {
           padding: EdgeInsets.all(20),
           child: Column(
             children: [
+              // --- BARRA DE BUSCA ---
               Container(
                 height: 50,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -58,6 +77,8 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
               ),
+
+              // --- SEÇÃO DE ÚLTIMOS TRAJETOS (Estático) ---
               const SizedBox(height: 15,),
               SizedBox(
                 width: double.infinity,
@@ -81,6 +102,7 @@ class _HomePageState extends State<HomePage> {
                 addressName: "Rua Prof. Doutor Aymar Batista Prado"
               ),
 
+              // --- SEÇÃO DE PONTOS POPULARES (Dinâmico da API) ---
               const SizedBox(height: 15,),
               SizedBox(
                 width: double.infinity,
@@ -94,9 +116,45 @@ class _HomePageState extends State<HomePage> {
               ),
 
               Divider(thickness: 2, color: const Color.fromARGB(255, 66, 66, 66),),
-              PopularWWalkingSpots(localName: "Biblioteca Central", color: Colors.green),
-              SizedBox(height: 10,),
-              PopularWWalkingSpots(localName: "Teatro do Campus", color: Colors.purple),
+              FutureBuilder<List<dynamic>>(
+                future: _poisFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(30.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  } else if (snapshot.hasError) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Text("Erro ao carregar pontos de interesse."),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Text("Nenhum ponto encontrado no banco de dados."),
+                    );
+                  }
+
+                  final pois = snapshot.data!;
+                  
+                  return ListView.separated(
+                    shrinkWrap: true, 
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: pois.length,
+                    separatorBuilder: (context, index) => const SizedBox(height: 10),
+                    itemBuilder: (context, index) {
+                      final poi = pois[index];
+                      return PopularWWalkingSpots(
+                        localName: poi['name'] ?? 'Ponto sem nome',
+                        color: _poiColors[index % _poiColors.length],
+                      );
+                    },
+                  );
+                },
+              ),
             ],
           ),
         ),

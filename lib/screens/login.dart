@@ -1,6 +1,7 @@
 import 'package:app/components/login_button.dart';
 import 'package:app/components/login_field.dart';
 import 'package:app/screens/home_scaffold.dart';
+import 'package:app/services/api_service.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -18,6 +19,54 @@ class _LoginPageState extends State<LoginPage> {
   String? errorMessage;
 
   bool rememberMe = false;
+
+
+  /// Função para realizar o login real via API
+  Future<void> _handleLogin() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      _showError("Preencha todos os campos");
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    // Chamada ao serviço de API que criamos
+    final success = await ApiService.login(email, password);
+
+    if (!mounted) return;
+
+    setState(() => isLoading = false);
+
+    if (success) {
+      // Navega para a HomeScaffold se o login for bem-sucedido
+      Navigator.pushReplacement(
+        context, 
+        MaterialPageRoute(builder: (_) => const HomeScaffold())
+      );
+    } else {
+      _showError("E-mail ou senha incorretos");
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message), 
+        backgroundColor: Colors.redAccent,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,10 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                                             width: double.infinity,
                                             height: 50,
                                             child: ElevatedButton(
-                                            onPressed: () { Navigator.pushReplacement(
-                                                context, 
-                                                MaterialPageRoute(builder: (_) => HomeScaffold())
-                                            );},
+                                            onPressed: isLoading ? null : _handleLogin,
                                             style: ElevatedButton.styleFrom(
                                                 elevation: 2,
                                                 shape: RoundedRectangleBorder(
@@ -115,11 +161,13 @@ class _LoginPageState extends State<LoginPage> {
                                                 ),
                                                 backgroundColor: Colors.blueAccent
                                             ),
-                                            child: const Text("Entrar", style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold
-                                            ),),
+                                            child: isLoading 
+                                                ? const CircularProgressIndicator(color: Colors.white)
+                                                : const Text("Entrar", style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold
+                                                )),
                                             )
                                         ),
                                         SizedBox(height: 10,),
