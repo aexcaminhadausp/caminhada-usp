@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:latlong2/latlong.dart';
 
 class ApiService {
   // Use 'http://127.0.0.1:8000' para Windows/Web.

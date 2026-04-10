@@ -1,12 +1,23 @@
 import 'package:app/screens/login.dart';
+import 'package:app/screens/home_scaffold.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Verifica se já existe um token salvo
+  final prefs = await SharedPreferences.getInstance();
+  final String? token = prefs.getString('jwt_token');
+
+  // Se o token existe, a tela inicial será a Home, senão, o Login
+  runApp(MyApp(initialScreen: token != null ? const HomeScaffold() : const LoginPage()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Widget initialScreen;
+
+  const MyApp({super.key, required this.initialScreen});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -44,7 +55,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: LoginPage(),
+      home: initialScreen,
     );
   }
 }

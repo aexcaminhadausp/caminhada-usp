@@ -2,6 +2,10 @@ import 'package:app/components/popular_walking_spots.dart';
 import 'package:app/components/latest_route.dart';
 import 'package:app/services/api_service.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:app/screens/route_tracking.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -22,6 +26,40 @@ class _HomePageState extends State<HomePage> {
     Colors.blue,
     Colors.red,
   ];
+
+  Future<void> _goToRoute(Map<String, dynamic> poi) async {
+    // 1. Pedir permissão e pegar localização atual
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.always || permission == LocationPermission.whileInUse) {
+      Position position = await Geolocator.getCurrentPosition();
+      
+      // 2. Extrair coordenadas do POI vindas do seu backend (GeoJSON ou Lat/Lng)
+      // Assumindo que seu backend retorna 'latitude' e 'longitude' no objeto poi
+      final double destLat = poi['latitude'];
+      final double destLon = poi['longitude'];
+
+      if (!mounted) return;
+
+      // 3. Navegar para o mapa enviando Origem (GPS) e Destino (Banco)
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => RouteTracking(
+            start: LatLng(position.latitude, position.longitude),
+            end: LatLng(destLat, destLon),
+          ),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("A permissão de localização é necessária.")),
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -150,6 +188,7 @@ class _HomePageState extends State<HomePage> {
                       return PopularWWalkingSpots(
                         localName: poi['name'] ?? 'Ponto sem nome',
                         color: _poiColors[index % _poiColors.length],
+                        onTap: () => _goToRoute(poi), // Chama a função de navegação
                       );
                     },
                   );

@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 class PopularWWalkingSpots extends StatelessWidget {
   final String localName;
   final Color color;
-  const PopularWWalkingSpots({super.key, required this.localName, required this.color});
+  final VoidCallback onTap;
+
+  const PopularWWalkingSpots({
+    super.key, 
+    required this.localName, 
+    required this.color,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -11,9 +18,7 @@ class PopularWWalkingSpots extends StatelessWidget {
       width: double.infinity,
       height: 130,
       child: ElevatedButton(
-        onPressed: () {
-          
-        }, 
+        onPressed: onTap, 
         style: ElevatedButton.styleFrom(
           foregroundColor: Colors.white,
           backgroundColor: color,
