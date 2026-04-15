@@ -60,3 +60,14 @@ class UserPreference(Base):
     # Relacionamento reverso
     user = relationship("User", back_populates="preferences")
     preference_type = relationship("PreferenceType")
+
+class RouteHistory(Base):
+    __tablename__ = "route_history"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"))
+    destination_point_id = Column(Integer, ForeignKey("points_of_interest.id"))
+    polyline = Column(Text, nullable=False)
+    distance = Column(Float, nullable=False)
+    rate = Column(Integer) # Nota de 0 a 5
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

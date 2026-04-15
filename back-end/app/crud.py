@@ -86,3 +86,69 @@ def get_map_assets(db: Session, skip: int = 0, limit: int = 100):
     ).offset(skip).limit(limit).all()
     
     return assets
+
+
+# --- HISTÓRICO DE ROTAS ---
+
+def get_user_history(db: Session, user_id: UUID, skip: int = 0, limit: int = 100):
+    """
+    Busca o histórico de rotas de um utilizador específico, 
+    trazendo junto o nome do Ponto de Interesse (Destino).
+    """
+    results = db.query(
+        models.RouteHistory.id,
+        models.RouteHistory.distance,
+        models.RouteHistory.rate,
+        models.RouteHistory.created_at,
+        models.RouteHistory.destination_point_id.label("destination_id"),
+        models.PointOfInterest.name.label("destination_name"),
+        ST_Y(models.PointOfInterest.location).label("latitude"),
+        ST_X(models.PointOfInterest.location).label("longitude")
+    ).join(
+        models.PointOfInterest, 
+        models.RouteHistory.destination_point_id == models.PointOfInterest.id
+    ).filter(
+        models.RouteHistory.user_id == user_id
+    ).order_by(
+        models.RouteHistory.created_at.desc()
+    ).offset(skip).limit(limit).all()
+    
+    return [
+        {
+            "id": str(r.id),
+            "destination_id": r.destination_id,
+            "destination_name": r.destination_name,
+            "latitude": r.latitude,
+            "longitude": r.longitude,
+            "distance": r.distance,
+            "rate": r.rate,
+            "created_at": r.created_at.isoformat() if r.created_at else None
+        } for r in results
+    ]
+
+def create_user_history(db: Session, history: schemas.RouteHistoryCreate, user_id: UUID):
+    """Salva um novo trajeto no histórico do utilizador."""
+    db_history = models.RouteHistory(
+        user_id=user_id,
+        destination_point_id=history.destination_id,
+        polyline=history.polyline,
+        distance=history.distance,
+        rate=history.rate
+    )
+    db.add(db_history)
+    db.commit()
+    db.refresh(db_history) # Atualiza o objeto para pegar o ID gerado (UUID)
+    return db_history
+
+def update_history_rate(db: Session, history_id: UUID, rate: int, user_id: UUID):
+    """Atualiza apenas a avaliação (rate) de um trajeto no histórico."""
+    db_history = db.query(models.RouteHistory).filter(
+        models.RouteHistory.id == history_id,
+        models.RouteHistory.user_id == user_id
+    ).first()
+    
+    if db_history:
+        db_history.rate = rate
+        db.commit()
+        db.refresh(db_history)
+    return db_history

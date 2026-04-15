@@ -41,7 +41,7 @@ CREATE TABLE points_of_interest (
 CREATE TABLE route_history (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    destination_point_id INTEGER REFERENCES points_of_interest(id),
+    destination_point_id INTEGER NOT NULL REFERENCES points_of_interest(id),
     polyline TEXT NOT NULL,
     distance FLOAT NOT NULL,
     rate INTEGER CHECK (rate >= 0 AND rate <= 5),
@@ -82,3 +82,18 @@ CREATE TABLE map_assets (
 CREATE INDEX idx_poi_geom ON points_of_interest USING GIST (geom_point);
 CREATE INDEX idx_reviews_geom ON user_overrrides_reviews USING GIST (geom_point);
 CREATE INDEX idx_overrides_geom ON map_overrides USING GIST (geom_area);
+
+
+-- --- INSERÇÃO DE DADOS INICIAIS (POIs) ---
+
+INSERT INTO points_of_interest (name, geom_point, description) VALUES
+(
+    'DCM (Departamento de Computação e Matemática)', 
+    ST_SetSRID(ST_MakePoint(-47.8477, -21.1666), 4326), 
+    'Departamento de Computação e Matemática da USP Ribeirão Preto'
+),
+(
+    'Bandeijão (Restaurante Universitário)', 
+    ST_SetSRID(ST_MakePoint(-47.8498, -21.1597), 4326), 
+    'Restaurante Universitário (Bandeijão) do campus da USP Ribeirão Preto'
+);

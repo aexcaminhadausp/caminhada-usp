@@ -1,11 +1,10 @@
 import 'package:app/components/local_field.dart';
 import 'package:app/components/route_warnings.dart';
 import 'package:app/screens/route_tracking.dart';
+import 'package:app/services/api_service.dart';
 import 'package:flutter/material.dart';
-import 'package:app/services/geocoding_service.dart';
+import 'package:geolocator/geolocator.dart';
 
-// IMPORTANDO OS PONTOS FIXOS DO CAMPUS
-import 'package:app/screens/campus_route_service.dart';
 import 'package:latlong2/latlong.dart';
 
 class CreateRoteScreen extends StatefulWidget {
@@ -20,6 +19,9 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
   final TextEditingController origemController = TextEditingController();
   final TextEditingController destinoController = TextEditingController();
 
+  List<dynamic> _availablePois = [];
+  int? _selectedDestinationId;
+
   final List<WalkingPreferenceType> walkingPreferencesTypes = [
     WalkingPreferenceType(title: "Rápida", icon: Icons.run_circle_outlined),
     WalkingPreferenceType(
@@ -29,15 +31,36 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
     WalkingPreferenceType(title: "Sombra", icon: Icons.nature_people)
   ];
 
-  final Map<String, LatLng> campusSuggestions = {
-    "Biblioteca Central": CampusRouteService.bibliotecaCentral,
-    "Restaurante Central": CampusRouteService.restauranteCentral,
-    "Centro Esportivo": CampusRouteService.centroEsportivo,
-    "Faculdade de Filosofia Exatas":
-    CampusRouteService.faculdadeFilosofiaExatas,
-    "Faculdade de Filosofia Humanas":
-    CampusRouteService.faculdadeFilosofiaHumanas,
-  };
+  @override
+  void initState() {
+    super.initState();
+    _loadPois(); // Carrega os destinos assim que a tela abre
+  }
+
+  Future<void> _loadPois() async {
+    final pois = await ApiService.getMapPOIs();
+    
+    if (!mounted) return; // Previne erro caso a tela seja fechada antes da API responder
+    
+    setState(() {
+      _availablePois = pois;
+    });
+  }
+
+  void _onDestinationSelected(String selection) {
+    // Busca o objeto POI completo pelo nome selecionado
+    final poi = _availablePois.firstWhere(
+      (p) => p['name'] == selection,
+      orElse: () => null,
+    );
+
+    if (poi != null) {
+      setState(() {
+        destinoController.text = poi['name'];
+        _selectedDestinationId = poi['id'];
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +68,9 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
       appBar: AppBar(title: const Text("Criar Rota")),
       body: Stack(
         children: [
-          _configurationRouteLabel(),
+          SingleChildScrollView(
+            child: _configurationRouteLabel(),
+          ),
           DraggableScrollableSheet(
             initialChildSize: 0.3,
             minChildSize: 0.3,
@@ -79,9 +104,6 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
                 final startQuery = origemController.text;
                 final endQuery = destinoController.text;
 
-                print("Origem digitada: $startQuery");
-                print("Destino digitado: $endQuery");
-
                 if (startQuery.isEmpty || endQuery.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -91,21 +113,67 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
                   return;
                 }
 
-                final start =
-                    campusSuggestions[startQuery] ??
-                        await GeocodingService.getCoordinates(startQuery);
-
-                final end =
-                    campusSuggestions[endQuery] ??
-                        await GeocodingService.getCoordinates(endQuery);
-
-                print("Start coords: $start");
-                print("End coords: $end");
-
-                if (start == null || end == null) {
+                // --- VERIFICAÇÃO DE PERMISSÃO DE GPS ---
+                bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+                if (!serviceEnabled) {
+                  if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text("Não foi possível encontrar a rota"),
+                      content: Text("Por favor, ative o GPS do celular para navegar."),
+                    ),
+                  );
+                  return;
+                }
+                LocationPermission permission = await Geolocator.checkPermission();
+                if (permission == LocationPermission.denied) {
+                  permission = await Geolocator.requestPermission();
+                }
+
+                if (!mounted) return;
+
+                if (permission == LocationPermission.denied || permission == LocationPermission.deniedForever) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("A permissão de localização é necessária para navegação.")),
+                  );
+                  return;
+                }
+
+                LatLng? start;
+                LatLng? end;
+
+                // 1. Define a Origem: Tenta encontrar nos POIs ou usa GPS se estiver vazio
+                if (startQuery == "Localização Atual" || startQuery.isEmpty) {
+                  Position position = await Geolocator.getCurrentPosition();
+                  start = LatLng(position.latitude, position.longitude);
+                } else {
+                  final poiOrigem = _availablePois.firstWhere(
+                    (p) => p['name'] == startQuery,
+                    orElse: () => null,
+                  );
+                  if (poiOrigem != null) {
+                    start = LatLng(poiOrigem['latitude'], poiOrigem['longitude']);
+                  }
+                }
+
+                // 2. Define o Destino: OBRIGATÓRIO ser um POI da lista para ter ID
+                final poiDestino = _availablePois.firstWhere(
+                  (p) => p['name'] == endQuery,
+                  orElse: () => null,
+                );
+
+                if (poiDestino != null) {
+                  end = LatLng(poiDestino['latitude'], poiDestino['longitude']);
+                  _selectedDestinationId = poiDestino['id'];
+                }
+
+                if (!mounted) return;
+
+                // 3. Validação Final: Se não houver destino válido ou ID, bloqueia
+                if (start == null || end == null || _selectedDestinationId == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Selecione uma origem e destino válidos."),
+                      backgroundColor: Colors.redAccent,
                     ),
                   );
                   return;
@@ -115,8 +183,10 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => RouteTracking(
-                      start: start,
-                      end: end,
+                      start: start!,
+                      end: end!,
+                      preferenceType: _selectedType,
+                      destinationId: _selectedDestinationId!, // Envia o ID real do banco
                     ),
                   ),
                 );
@@ -151,12 +221,12 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
-            children: campusSuggestions.keys.map((nome) {
+            children: _availablePois.map((poi) {
               return ActionChip(
-                label: Text(nome),
+                label: Text(poi['name'] ?? "Ponto"),
                 onPressed: () {
                   setState(() {
-                    origemController.text = nome;
+                    origemController.text = poi['name'];
                   });
                 },
               );
@@ -171,16 +241,15 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
           const SizedBox(height: 20),
           Wrap(
             spacing: 8,
-            children: campusSuggestions.keys.map((nome) {
-              return ActionChip(
-                label: Text(nome),
-                onPressed: () {
-                  setState(() {
-                    destinoController.text = nome;
-                  });
-                },
-              );
-            }).toList(),
+            children: _availablePois.isEmpty
+                ? [const Padding(padding: EdgeInsets.all(8.0), child: SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2)))]
+                : _availablePois.map((poi) {
+                    return ActionChip(
+                      label: Text(poi['name'] ?? "Ponto"),
+                      // Reutiliza a sua função para organizar a seleção
+                      onPressed: () => _onDestinationSelected(poi['name'] ?? ""),
+                    );
+                  }).toList(),
           ),
           SizedBox(
             height: 150,

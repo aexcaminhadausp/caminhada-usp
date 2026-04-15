@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from sqlalchemy import text
+from sqlalchemy import text, select
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import timedelta
 from . import models, schemas, crud, database, utils
 from jose import JWTError, jwt
 from typing import List
+from uuid import UUID
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
@@ -140,7 +141,7 @@ def read_users(current_user: models.User = Depends(get_current_user), db: Sessio
     return users
 
 
-    # --- ROTAS DE MAPA (POSTGIS) ---
+# --- ROTAS DE MAPA (Pontos de Interesse) ---
 
 @app.get("/map/pois", response_model=List[schemas.POIResponse])
 def read_pois(db: Session = Depends(database.get_db), current_user: models.User = Depends(get_current_user)):
@@ -151,3 +152,38 @@ def read_pois(db: Session = Depends(database.get_db), current_user: models.User 
 def add_poi(poi: schemas.POICreate, db: Session = Depends(database.get_db), current_user: models.User = Depends(get_current_user)):
     """Adiciona um novo ponto de interesse (Apenas para testes do grupo)."""
     return crud.create_poi(db, poi)
+
+
+# --- ROTAS DE MAPA (Historico) ---
+
+
+@app.post("/history")
+async def save_history(
+    history_data: schemas.RouteHistoryCreate, 
+    current_user: models.User = Depends(get_current_user), 
+    db: Session = Depends(database.get_db)
+):
+    new_entry = crud.create_user_history(db, history=history_data, user_id=current_user.id)
+    return {"status": "success", "id": str(new_entry.id)}
+
+# --- ENDPOINT PARA ATUALIZAR AVALIAÇÃO (PATCH) ---
+@app.patch("/history/{history_id}/rate")
+async def update_history_rate(
+    history_id: UUID,
+    rate_data: schemas.RouteRateUpdate,
+    current_user: models.User = Depends(get_current_user),
+    db: Session = Depends(database.get_db)
+):
+    updated_history = crud.update_history_rate(db, history_id=history_id, rate=rate_data.rate, user_id=current_user.id)
+    if not updated_history:
+        raise HTTPException(status_code=404, detail="Histórico não encontrado ou não pertence ao usuário.")
+    return {"status": "success", "id": str(updated_history.id), "rate": updated_history.rate}
+
+# --- ENDPOINT PARA LISTAR HISTÓRICO (GET) ---
+@app.get("/history", response_model=list[schemas.RouteHistoryResponse])
+async def get_history(
+    current_user: models.User = Depends(get_current_user), 
+    db: Session = Depends(database.get_db)
+):
+    # A lógica de busca e formatação foi delegada para o crud.py
+    return crud.get_user_history(db, user_id=current_user.id)

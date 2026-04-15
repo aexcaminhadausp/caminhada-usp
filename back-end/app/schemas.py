@@ -73,3 +73,27 @@ class MapAssetResponse(MapAssetBase):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# --- SCHEMAS DE HISTÓRICO ---
+
+class RouteHistoryCreate(BaseModel):
+    destination_id: int
+    polyline: str
+    distance: float
+    rate: Optional[int] = None
+
+class RouteHistoryResponse(BaseModel):
+    id: UUID
+    destination_id: int
+    destination_name: str
+    latitude: float
+    longitude: float
+    distance: float
+    rate: Optional[int] = None
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+class RouteRateUpdate(BaseModel):
+    rate: int

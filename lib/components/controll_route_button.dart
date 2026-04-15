@@ -1,4 +1,3 @@
-import 'package:app/screens/route_statistic.dart';
 import 'package:flutter/material.dart';
 
 class ControllRoteButton extends StatelessWidget {
@@ -7,13 +6,17 @@ class ControllRoteButton extends StatelessWidget {
   final double iconSize;
   final Color color;
   final bool finish;
+  final VoidCallback? onTap;
+
   const ControllRoteButton({
     super.key, 
     required this.icone, 
     required this.buttonSize, 
     required this.iconSize,
     required this.color,
-    required this.finish});
+    required this.finish,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +24,7 @@ class ControllRoteButton extends StatelessWidget {
       width: buttonSize,
       height: buttonSize,
       child: ElevatedButton(
-        onPressed: () {if(finish){
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => StatisticRouteScreen(),));
-        }},
+        onPressed: onTap,
         style: ElevatedButton.styleFrom(
           shape: const CircleBorder(),
           padding: EdgeInsets.zero,
