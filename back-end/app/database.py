@@ -17,10 +17,11 @@ db_pass = os.getenv("DB_PASSWORD")
 db_host = os.getenv("DB_HOST")
 db_port = os.getenv("DB_PORT")
 db_name = os.getenv("DB_NAME")
+db_url = os.getenv("DATABASE_URL")
 
 # URL de conexão para PostgreSQL síncrono (psycopg2)
-SQLALCHEMY_DATABASE_URL = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
-
+#SQLALCHEMY_DATABASE_URL = f"postgresql://{db_user}:{db_pass}@{db_host}:{db_port}/{db_name}"
+SQLALCHEMY_DATABASE_URL = db_url
 # O 'engine' gere o Connection Pool (piscina de conexões físicas TCP/IP)
 # TODO: No futuro, migrar para 'create_async_engine' do SQLAlchemy 2.0+ 
 # para suportar concorrência nativa sem dependência de Thread Pools.
