@@ -1,6 +1,7 @@
 import 'package:app/components/login_button.dart';
 import 'package:app/components/login_field.dart';
 import 'package:app/screens/home_scaffold.dart';
+import 'package:app/screens/register.dart';
 import 'package:app/services/api_service.dart';
 import 'package:flutter/material.dart';
 
@@ -93,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: Padding(
                         padding: EdgeInsets.all(25),
-                        child: Center( child: Column(
+                        child: Center( child: SingleChildScrollView( child: Column(
                             children: [
                                 const Text("Acesse sua conta", 
                                     textAlign: TextAlign.center, 
@@ -112,7 +113,6 @@ class _LoginPageState extends State<LoginPage> {
                                 const SizedBox(height: 15,),
                                 Container(
                                     padding: EdgeInsets.all(25),
-                                    height: 500,
                                     decoration: BoxDecoration(
                                         color: Colors.grey.shade300,
                                         borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -176,7 +176,12 @@ class _LoginPageState extends State<LoginPage> {
                                             children: [
                                                 const Text("Não possui conta?"),
                                                 TextButton(
-                                                    onPressed: () {},
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(builder: (_) => const RegisterPage()),
+                                                      );
+                                                    },
                                                     child:const  Text('Criar Conta',
                                                         style: TextStyle(color: Colors.blue, 
                                                         decoration: TextDecoration.underline,
@@ -191,7 +196,7 @@ class _LoginPageState extends State<LoginPage> {
                                     ],),
                                 ),
                                 ],
-                        ),),
+                        ),),),
                 ))
                 )
             ],),

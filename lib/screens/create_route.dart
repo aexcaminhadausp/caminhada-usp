@@ -66,40 +66,18 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Criar Rota")),
-      body: Stack(
+      body: Column(
         children: [
-          SingleChildScrollView(
-            child: _configurationRouteLabel(),
+          Expanded(
+            child: SingleChildScrollView(
+              child: _configurationRouteLabel(),
+            ),
           ),
-          DraggableScrollableSheet(
-            initialChildSize: 0.3,
-            minChildSize: 0.3,
-            maxChildSize: 0.7,
-            builder: (context, scrollController) {
-              return Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(
-                    top: Radius.circular(20),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 10,
-                      color: Colors.black26,
-                    ),
-                  ],
-                ),
-                child: ListView(
-                  controller: scrollController,
-                ),
-              );
-            },
-          ),
-          Positioned(
-            left: 20,
-            right: 20,
-            bottom: 100,
-            child: ElevatedButton(
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
               onPressed: () async {
                 final startQuery = origemController.text;
                 final endQuery = destinoController.text;
@@ -193,6 +171,8 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
               },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: Colors.green,
+                    foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -201,6 +181,7 @@ class _CreateRoteScreenState extends State<CreateRoteScreen> {
                 "Iniciar rota",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
+            ),
             ),
           ),
         ],

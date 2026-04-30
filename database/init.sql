@@ -94,6 +94,6 @@ INSERT INTO points_of_interest (name, geom_point, description) VALUES
 ),
 (
     'Bandeijão (Restaurante Universitário)', 
-    ST_SetSRID(ST_MakePoint(-47.8498, -21.1597), 4326), 
+    ST_SetSRID(ST_MakePoint(-47.84746572681163, -21.159698759503186), 4326), 
     'Restaurante Universitário (Bandeijão) do campus da USP Ribeirão Preto'
 );

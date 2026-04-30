@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 15),
                       Text(
-                        user['full_name'] ?? "Usuário",
+                        user['name'] ?? "Usuário",
                         style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                       Text(

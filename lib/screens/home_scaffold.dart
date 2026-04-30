@@ -16,6 +16,8 @@ class _HomeScaffoldState extends State<HomeScaffold> {
   final _pages = const [
     HomePage(),
     ProfileScreen(),
+    // Tela temporária para evitar o erro de RangeError no índice 2
+    Scaffold(body: Center(child: Text("Configurações em breve..."))),
   ];
 
   @override
@@ -43,12 +45,12 @@ class _HomeScaffoldState extends State<HomeScaffold> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Configurações',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Perfil',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Configurações',
           ),
         ],
       ),

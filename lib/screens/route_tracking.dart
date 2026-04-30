@@ -33,6 +33,7 @@ class _RouteTrackingState extends State<RouteTracking> {
   List<List<LatLng>> _routes = [];
   int _selectedRouteIndex = 0;
   bool _isRouteSaved = false;
+  bool _isNavigating = false;
   final double _arrivalThreshold = 15.0;
   final Stopwatch _stopwatch = Stopwatch(); 
   double _distanceToTarget = 0.0;           
@@ -42,14 +43,16 @@ class _RouteTrackingState extends State<RouteTracking> {
   List<double> _routeDistances = [];
   List<double> _routeDurations = [];
 
+  LatLng? _currentPosition;
+  List<LatLng> _activeRouteLine = [];
+  final MapController _mapController = MapController();
   StreamSubscription<Position>? _positionStream;
 
   @override
   void initState() {
     super.initState();
+    _currentPosition = widget.start;
     calculateRoutes();
-    _startTracking();
-    _stopwatch.start();
   }
 
   @override
@@ -61,7 +64,7 @@ class _RouteTrackingState extends State<RouteTracking> {
 
   Future<void> calculateRoutes() async {
     final url =
-        "https://router.project-osrm.org/route/v1/foot/"
+        "https://routing.openstreetmap.de/routed-foot/route/v1/driving/"
         "${widget.start.longitude},${widget.start.latitude};"
         "${widget.end.longitude},${widget.end.latitude}"
         "?overview=full&geometries=geojson&alternatives=true&steps=true";
@@ -107,6 +110,9 @@ class _RouteTrackingState extends State<RouteTracking> {
         _routeDurations = durations;
         _distanceKm = selected["distance"] / 1000;
         _durationMin = selected["duration"] / 60;
+        if (routes.isNotEmpty) {
+          _activeRouteLine = List.from(routes[0]);
+        }
       });
 
       print("Automatic route loaded successfully");
@@ -143,9 +149,54 @@ class _RouteTrackingState extends State<RouteTracking> {
     return result.toString();
   }
 
-  void _startTracking() {
-    _stopwatch.start(); // Inicia a contagem de tempo real
+  void _updateRouteProgress(LatLng currentPos) {
+    if (_routes.isEmpty) return;
 
+    final distance = const Distance();
+    final route = _routes[_selectedRouteIndex];
+    
+    int closestIndex = 0;
+    double minDistance = double.infinity;
+    
+    // Procura o ponto mais próximo na rota
+    for (int i = 0; i < route.length; i++) {
+      double d = distance.as(LengthUnit.Meter, currentPos, route[i]);
+      if (d < minDistance) {
+        minDistance = d;
+        closestIndex = i;
+      }
+    }
+
+    // Calcula a distância restante ao longo da rota
+    double remainingDistance = 0;
+    if (closestIndex < route.length) {
+      remainingDistance += minDistance;
+      for (int i = closestIndex; i < route.length - 1; i++) {
+        remainingDistance += distance.as(LengthUnit.Meter, route[i], route[i+1]);
+      }
+    }
+
+    // Cria a linha da rota consumida (começa do usuário e segue do ponto mais próximo até o final)
+    List<LatLng> consumedRouteLine = [currentPos];
+    if (closestIndex < route.length) {
+       consumedRouteLine.addAll(route.sublist(closestIndex));
+    }
+
+    setState(() {
+      _currentPosition = currentPos;
+      _distanceToTarget = remainingDistance;
+      _activeRouteLine = consumedRouteLine;
+    });
+  }
+
+  void _startNavigation() {
+    if (_isNavigating) return; // Proteção contra múltiplos inícios
+    setState(() => _isNavigating = true);
+    _stopwatch.start();
+    _startTracking();
+  }
+
+  void _startTracking() {
     _positionStream = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
@@ -156,16 +207,18 @@ class _RouteTrackingState extends State<RouteTracking> {
         if (!mounted) return;
 
         final currentPos = LatLng(position.latitude, position.longitude);
+        final metersRemainingToDest = const Distance().as(LengthUnit.Meter, currentPos, widget.end);
         
-        // Calcula a distância real até o POI
-        final metersRemaining = const Distance().as(LengthUnit.Meter, currentPos, widget.end);
-
-        setState(() {
-          _distanceToTarget = metersRemaining;
-        });
+        _updateRouteProgress(currentPos);
+        
+        try {
+          _mapController.move(currentPos, _mapController.camera.zoom);
+        } catch (e) {
+          debugPrint("Erro no MapController: $e");
+        }
 
         // Chegada ao destino
-        if (metersRemaining <= _arrivalThreshold && !_isRouteSaved) {   
+        if (metersRemainingToDest <= _arrivalThreshold && !_isRouteSaved) {   
           _saveRouteToHistory();
         }
       },
@@ -180,7 +233,6 @@ class _RouteTrackingState extends State<RouteTracking> {
   Future<void> _saveRouteToHistory() async {
     if (_isRouteSaved) return; // Proteção contra múltiplos disparos
 
-    // 1. Prepara os dados técnicos (Polyline e Distância)
     String encodedPath = encodePolyline(_routes[_selectedRouteIndex]);
     final double finalDistanceKm = _distanceKm;
     final int totalSeconds = _stopwatch.elapsed.inSeconds;
@@ -268,6 +320,7 @@ class _RouteTrackingState extends State<RouteTracking> {
       body: Stack(
         children: [
           FlutterMap(
+            mapController: _mapController,
             options: MapOptions(
               initialCenter: widget.start,
               initialZoom: 16,
@@ -283,7 +336,9 @@ class _RouteTrackingState extends State<RouteTracking> {
                     _routes.length,
                         (index) {
                       return Polyline(
-                        points: _routes[index],
+                        points: (_isNavigating && index == _selectedRouteIndex) 
+                            ? _activeRouteLine 
+                            : _routes[index],
                         strokeWidth: 5,
                         color: index == _selectedRouteIndex
                             ? Colors.blue
@@ -303,6 +358,23 @@ class _RouteTrackingState extends State<RouteTracking> {
                       color: Colors.green,
                       size: 20,
                     ),
+                  ),
+                  if (_currentPosition != null)
+                    Marker(
+                      point: _currentPosition!,
+                      width: 40,
+                      height: 40,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blueAccent.withValues(alpha: 0.3),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.my_location,
+                          color: Colors.blueAccent,
+                          size: 20,
+                        ),
+                      ),
                   ),
                   Marker(
                     point: widget.end,
@@ -340,14 +412,18 @@ class _RouteTrackingState extends State<RouteTracking> {
                         RouteStatisticTrackingLabel(
                           icon: Icons.directions_walk,
                           label: "Tempo",
-                          value: _distanceKm > 0 
-                              ? "${((_distanceToTarget / 1000) / (_distanceKm / _durationMin)).toStringAsFixed(1)} min" 
-                              : "--- min",
+                          value: _isNavigating && _distanceKm > 0
+                              ? "${((_distanceToTarget / 1000) / (_distanceKm / _durationMin)).toStringAsFixed(1)} min"
+                              : _isNavigating
+                                  ? "--- min"
+                                  : "${_durationMin.toStringAsFixed(1)} min",
                         ),
                         RouteStatisticTrackingLabel(
                           icon: Icons.map,
                           label: "Distância",
-                          value: "${(_distanceToTarget / 1000).toStringAsFixed(2)} km",
+                          value: _isNavigating
+                            ?"${(_distanceToTarget / 1000).toStringAsFixed(2)} km"
+                            : "${_distanceKm.toStringAsFixed(2)} km",
                         ),
                       ],
                     ),
@@ -366,6 +442,10 @@ class _RouteTrackingState extends State<RouteTracking> {
                                   _selectedRouteIndex = index;
                                   _distanceKm = _routeDistances[index];
                                   _durationMin = _routeDurations[index];
+                                  _activeRouteLine = List.from(_routes[index]);
+                                  if (_isNavigating && _currentPosition != null) {
+                                    _updateRouteProgress(_currentPosition!);
+                                  }
                                 });
                               },
                             );
@@ -384,14 +464,20 @@ class _RouteTrackingState extends State<RouteTracking> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const ControllRoteButton(
-                  icone: Icons.play_arrow_outlined,
-                  iconSize: 60,
-                  buttonSize: 80,
-                  color: Colors.green,
-                  finish: false,
-                ),
-                const SizedBox(width: 10),
+                if (!_isNavigating)
+                  Row(
+                    children: [
+                      ControllRoteButton(
+                        onTap: _startNavigation,
+                        icone: Icons.play_arrow_outlined,
+                        iconSize: 60,
+                        buttonSize: 80,
+                        color: Colors.green,
+                        finish: false,
+                      ),
+                      const SizedBox(width: 10),
+                    ],
+                  ),
                 ControllRoteButton(
                   onTap: _showStopDialog,
                   icone: Icons.stop_outlined,
